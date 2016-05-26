@@ -10,6 +10,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.Date;
 import java.sql.ResultSet;
+import java.text.DateFormat;
+import java.util.Calendar;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -18,6 +20,11 @@ import javax.swing.table.DefaultTableModel;
 import koneksi.Database;
 import model.View;
 import model.transaksi;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import model.Aplikasi;
 
 /**
  *
@@ -150,18 +157,41 @@ public class cetakTransaksi extends javax.swing.JFrame implements View {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-    model.transaksi tr = new transaksi();
-    static int jum;
-    Date d= new Date();
+    private static model.transaksi tr = new transaksi();
+
+    static int jum = 1;
+    Date d = new Date();
+    DateFormat da = new SimpleDateFormat("yyyy-MM-dd");
+    String n = da.format(d);
+    static int i = 6;
+
+    // Method menambah dan mengurangi waktu
+    protected static Calendar tambahWaktu() {
+        /*
+         * Untuk mengurangi hari gunakan nilai minus (-) pada jmlTambahanWaktu
+         */
+        Calendar cal = Calendar.getInstance();
+
+        cal.setTime(tr.getTglCetak());
+        cal.add(Calendar.DATE, i);
+        return cal;
+    }
+
+
     private void btnPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintActionPerformed
         // TODO add your handling code here:
         try {
             jum++;
-            if ((tr.getTglCetak().)) {
+            if ((d.before(tambahWaktu().getTime())) && (jum < 4)) {
+                java.sql.Date dd = new java.sql.Date(d.getTime());
+                tr.setTglCetak(dd);
                 tbTransaksi.print();
-                tr.setStatusCetak("Cetak ke" + jum);
-            }
-            else{
+                i=i-d.getDay();
+                String s = "Cetak ke " + jum + " kurang "+i +" hari";
+                Aplikasi app = new Aplikasi();
+                app.updateTransaksiCetak(tr.getNoResi(), dd, s);
+            } else {
+                tr.setStatusCetak("Cetak > 3 kali");
                 JOptionPane.showMessageDialog(null, "Masa Cetak sudah habis");
             }
         } catch (Exception e) {

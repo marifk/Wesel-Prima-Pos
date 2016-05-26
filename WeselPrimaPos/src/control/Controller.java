@@ -39,7 +39,9 @@ public class Controller implements ActionListener {
 
     private View view;
     private Aplikasi app;
-    private String level;
+    private model.manpel man;
+    private model.loket lok;
+    private model.expedisi expe;
 
     public Controller() {
         app = new Aplikasi();
@@ -106,6 +108,12 @@ public class Controller implements ActionListener {
         ProfilLoket m = new ProfilLoket();
         m.setVisible(true);
         m.addListener(this);
+        m.setNama(lok.getNama());
+        m.setAlamat(lok.getAlamat());
+        m.setNoTelp(String.valueOf(lok.getNotlp()));
+        m.setUsername(lok.getUsername());
+        m.setPassword(lok.getPassword());
+
         view = m;
     }
 
@@ -120,6 +128,11 @@ public class Controller implements ActionListener {
         ProfilExpedisi m = new ProfilExpedisi();
         m.setVisible(true);
         m.addListener(this);
+        m.setNama(expe.getNama());
+        m.setAlamat(expe.getAlamat());
+        m.setNoTelp(String.valueOf(expe.getNotlp()));
+        m.setUsername(expe.getUsername());
+        m.setPassword(expe.getPassword());
         view = m;
     }
 
@@ -141,6 +154,12 @@ public class Controller implements ActionListener {
         profilManpel m = new profilManpel();
         m.setVisible(true);
         m.addListener(this);
+        m.setNama(man.getNama());
+        m.setAlamat(man.getAlamat());
+        m.setNoTelp(String.valueOf(man.getNotlp()));
+        m.setUsername(man.getUsername());
+        m.setPassword(man.getPassword());
+
         view = m;
     }
 
@@ -199,6 +218,7 @@ public class Controller implements ActionListener {
                     } else if (lg.getSbg().equals("Manajemen Pelayanan")) {
                         model.manpel mp = app.getManpel(lg.getTxUsername(), lg.getTxPassword());
                         if (mp != null) {
+                            man = mp;
                             JOptionPane.showMessageDialog(null, "Selamat datang " + lg.getTxUsername());
                             lg.dispose();
                             goToMain();
@@ -208,6 +228,7 @@ public class Controller implements ActionListener {
                     } else if (lg.getSbg().equals("Expedisi")) {
                         model.expedisi ex = app.getExpedisi(lg.getTxUsername(), lg.getTxPassword());
                         if (ex != null) {
+                            expe = ex;
                             JOptionPane.showMessageDialog(null, "Selamat datang " + lg.getTxUsername());
                             lg.dispose();
                             goToMainExpedisi();
@@ -217,6 +238,7 @@ public class Controller implements ActionListener {
                     } else if (lg.getSbg().equals("Loket")) {
                         model.loket lk = app.getLoket(lg.getTxUsername(), lg.getTxPassword());
                         if (lk != null) {
+                            lok = lk;
                             JOptionPane.showMessageDialog(null, "Selamat datang " + lg.getTxUsername());
                             lg.dispose();
                             goToMainLoket();
@@ -358,6 +380,19 @@ public class Controller implements ActionListener {
                 if (source.equals(mn.getBtnBack())) {
                     mn.dispose();
                     goToTransaksi();
+                } else if (source.equals(mn.getCekMasa())) {
+                    try {
+
+                        transaksi tr = app.getTransaksiResi(mn.getNoResi());
+                        if (tr != null) {
+                            mn.tampilTransaksiResi(mn.getNoResi());
+                            view = mn;
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Data Transaksi Tidak Ditemukan");
+                        }
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
+                    }
                 }
             } else if (view instanceof cetakTransaksi) {
                 cetakTransaksi mn = (cetakTransaksi) view;
@@ -365,13 +400,11 @@ public class Controller implements ActionListener {
                     try {
                         transaksi tr = app.getTransaksiResi(mn.getNoResi());
                         if (tr != null) {
-                            cetakTransaksi m = new cetakTransaksi();
-                            m.setVisible(true);
-                            m.addListener(this);
-                            m.tampilTransaksi(mn.getNoResi());
-                            view = m;
+                            mn.tampilTransaksi(mn.getNoResi());
+                            view = mn;
                         }
                     } catch (Exception e) {
+                        System.out.println(e.getMessage());
                     }
 
                 } else if (source.equals(mn.getBtnExcel())) {
@@ -379,7 +412,7 @@ public class Controller implements ActionListener {
                     goToCetakTransaksi();
                 } else if (source.equals(mn.getBtnPrint())) {
                     mn.dispose();
-                    
+
                     goToCetakTransaksi();
                 } else if (source.equals(mn.getBtnCancel())) {
                     mn.dispose();
@@ -397,6 +430,42 @@ public class Controller implements ActionListener {
                     mn.dispose();
                     goToLogin();
                 }
+            } else if (view instanceof ProfilLoket) {
+                ProfilLoket mn = (ProfilLoket) view;
+                if (source.equals(mn.getBtnEdit())) {
+                    mn.dispose();
+                    try {
+                        if (lok != null) {
+                            app.updateLoket(lok.getIdLoket(), mn.getNama(), mn.getAlamat(), mn.getNoTelp(), mn.getUsername(), mn.getPassword());
+                            JOptionPane.showMessageDialog(null, "Pengeditan Petugas Loket Berhasil");
+                            goToMainLoket();
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Data Petugas Loket Tidak Ditemukan");
+                        }
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(null, "Inputan Salah");
+                    }
+                } else if (source.equals(mn.getBtnCancel())) {
+                    mn.dispose();
+                    goToMainLoket();
+                }
+            } else if (view instanceof StatusBayar) {
+                StatusBayar mn = (StatusBayar) view;
+                if (source.equals(mn.getBtnCari())) {
+          
+                    try {
+                        transaksi tr = app.getTransaksi(mn.getTgl());
+                        if (tr != null) {
+                            mn.tampilTransaksi(mn.getTgl());
+                            view = mn;
+                        }
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
+                    }
+                } else if (source.equals(mn.getBtnCancel())) {
+                    mn.dispose();
+                    goToMainLoket();
+                }
             } else if (view instanceof MainExpedisi) {
                 MainExpedisi mn = (MainExpedisi) view;
                 if (source.equals(mn.getProfil())) {
@@ -408,6 +477,41 @@ public class Controller implements ActionListener {
                 } else if (source.equals(mn.getLogout())) {
                     mn.dispose();
                     goToLogin();
+                }
+            } else if (view instanceof ProfilExpedisi) {
+                ProfilExpedisi mn = (ProfilExpedisi) view;
+                if (source.equals(mn.getBtnEdit())) {
+                    mn.dispose();
+                    try {
+                        if (expe != null) {
+                            app.updateExpedisi(expe.getIdExpedisi(), mn.getNama(), mn.getAlamat(), mn.getNoTelp(), mn.getUsername(), mn.getPassword());
+                            JOptionPane.showMessageDialog(null, "Pengeditan Petugas Expedisi Berhasil");
+                            goToMainExpedisi();
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Data Petugas Expedisi Tidak Ditemukan");
+                        }
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(null, "Inputan Salah");
+                    }
+                } else if (source.equals(mn.getBtnCancel())) {
+                    mn.dispose();
+                    goToMainExpedisi();
+                }
+            } else if (view instanceof StatusAntar) {
+                StatusAntar mn = (StatusAntar) view;
+                if (source.equals(mn.getBtnCari())) {
+                    try {
+                        transaksi tr = app.getTransaksi(mn.getTgl());
+                        if (tr != null) {
+                            mn.tampilTransaksi(mn.getTgl());
+                            view = mn;
+                        }
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
+                    }
+                } else if (source.equals(mn.getBtnCancel())) {
+                    mn.dispose();
+                    goToMainExpedisi();
                 }
             }
         } catch (Exception e) {

@@ -48,7 +48,7 @@ public class transaksi implements Serializable{
         this.tglCetak = tglCetak;
         this.besarUang = besarUang;
         this.statusAntar="Belum Diantar";
-        this.statusCetak="Pertama Cetak";
+        this.statusCetak="Cetak ke 1";
         this.statusBayar="Belum Dibayar";
         this.ket="";
     }

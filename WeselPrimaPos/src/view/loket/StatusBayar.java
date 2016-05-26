@@ -6,13 +6,21 @@
 package view.loket;
 
 import java.awt.event.ActionListener;
+import java.sql.Date;
+import java.sql.ResultSet;
+import javax.swing.DefaultCellEditor;
+import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import koneksi.Database;
+import model.Aplikasi;
 import model.View;
 
 /**
  *
  * @author Kurniawan
  */
-public class StatusBayar extends javax.swing.JFrame implements View{
+public class StatusBayar extends javax.swing.JFrame implements View {
 
     /**
      * Creates new form StatusBayar
@@ -20,6 +28,7 @@ public class StatusBayar extends javax.swing.JFrame implements View{
     public StatusBayar() {
         initComponents();
     }
+    private JComboBox cbBayar;
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -30,28 +39,167 @@ public class StatusBayar extends javax.swing.JFrame implements View{
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel1 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        tgl = new de.wannawork.jcalendar.JCalendarComboBox();
+        btnCari = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tb = new javax.swing.JTable();
+        btnCancel = new javax.swing.JButton();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Status Bayar"));
+
+        jLabel1.setText("Masukkan Tanggal ");
+
+        btnCari.setText("Search");
+
+        tb.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(tb);
+
+        btnCancel.setText("Cancel");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 409, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(btnCari)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(jLabel1)
+                                        .addGap(34, 34, 34)
+                                        .addComponent(tgl, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addContainerGap())
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(btnCancel)
+                                .addGap(36, 36, 36))))))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(tgl, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnCari)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(33, 33, 33)
+                .addComponent(btnCancel)
+                .addContainerGap(93, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+public void tampilTransaksi(Date tgl) {
+        DefaultTableModel tabel = new DefaultTableModel();
+        tabel.addColumn("No. Resi");
+        tabel.addColumn("Tanggal Cetak");
+        tabel.addColumn("Besar Uang");
+        tabel.addColumn("Nama Pengirim");
+        tabel.addColumn("Nama Penerima");
+        tabel.addColumn("Status Bayar");
+        cbBayar = new JComboBox();
+        cbBayar.addItem("");
+        cbBayar.addItem("Berhasil");
+        cbBayar.addItem("Gagal");
+        Aplikasi app = new Aplikasi();
+        model.transaksi tr = new model.transaksi();
+        try {
+            Database db = new Database();
 
+            String s = "select * from transaksi where tglCetak='" + tgl + "'";
+            ResultSet res = db.getData(s);
+            while (res.next()) {
+                cbBayar.setVisible(true);
+                tr.setNoResi(res.getString(1));
+                tr.setNamaPengirim(res.getString(2));
+                tr.setNamaPenerima(res.getString(6));
+                tr.setTglCetak(res.getDate(10));
+                tr.setBesarUang(res.getInt(11));
+
+                tabel.addRow(new Object[]{res.getString(1), res.getDate(10), res.getInt(11),
+                    res.getString(2), res.getString(6)});
+
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Gagal Tampil Data");
+        }
+
+        tb.setModel(tabel);
+        tb.getColumnModel().getColumn(5).setCellEditor(new DefaultCellEditor(cbBayar));
+        app.updateStatusBayar(tr.getNoResi(), cbBayar.getSelectedItem().toString());
+
+    }
+
+    public Date getTgl() {
+        Date tglC = new Date(tgl.getDate().getTime());
+        return tglC;
+    }
+
+    public void setTgl(Date tgl) {
+        this.tgl.setDate(tgl);
+    }
+
+    public Object getBtnCancel() {
+        return btnCancel;
+    }
+
+    public Object getBtnCari() {
+        return btnCari;
+    }
 
     @Override
     public void addListener(ActionListener e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        btnCancel.addActionListener(e);
+        btnCari.addActionListener(e);
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCancel;
+    private javax.swing.JButton btnCari;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable tb;
+    private de.wannawork.jcalendar.JCalendarComboBox tgl;
     // End of variables declaration//GEN-END:variables
 }

@@ -31,6 +31,24 @@ public class Aplikasi {
         db.query(s);
     }
 
+    public void updateTransaksiCetak(String resi, Date tglCetak, String stat) {
+        Database db = new Database();
+        String s = "update transaksi set tglCetak='" + tglCetak + "',statusCetak='" + stat + "' where noResi='" + resi + "' ";
+        db.query(s);
+    }
+
+    public void updateStatusAntar(String resi, String stat, String ket) {
+        Database db = new Database();
+        String s = "update transaksi set statusAntar='" + stat + "',Keterangan='" + ket + "' where noResi='" + resi + "' ";
+        db.query(s);
+    }
+
+    public void updateStatusBayar(String resi, String stat) {
+        Database db = new Database();
+        String s = "update transaksi set statusBayar='" + stat + "' where noResi='" + resi + "' ";
+        db.query(s);
+    }
+
     public transaksi getTransaksi(Date tgl) {
         Database db = new Database();
         transaksi e = new transaksi();
@@ -38,7 +56,7 @@ public class Aplikasi {
         try {
             String s = "select*from transaksi where tglCetak='" + tgl + "'";
             rs = db.getData(s);
-            if (rs.next()) {
+            while (rs.next()) {
                 e.setNoResi(rs.getString(1));
                 e.setNamaPengirim(rs.getString(2));
                 e.setAlamatPengirim(rs.getString(3));
@@ -54,9 +72,7 @@ public class Aplikasi {
                 e.setStatusAntar(rs.getString(13));
                 e.setStatusBayar(rs.getString(14));
                 e.setKet(rs.getString(15));
-            } else {
-                e = null;
-            }
+            } 
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
@@ -107,6 +123,12 @@ public class Aplikasi {
         db.query(s);
     }
 
+    public void updateExpedisi(int id, String nama, String alamat, int notlp, String user, String pass) {
+        Database db = new Database();
+        String s = "update expedisi set nama='" + nama + "' ,alamat='" + alamat + "',notlp='" + notlp + "',username='" + user + "',password='" + pass + "' where idExpedisi='" + id + "' ";
+        db.query(s);
+    }
+
     public expedisi getExpedisi(String user, String pass) {
         Database db = new Database();
         expedisi e = new expedisi();
@@ -143,6 +165,12 @@ public class Aplikasi {
         db.query(s);
     }
 
+    public void updateLoket(int id, String nama, String alamat, int notlp, String user, String pass) {
+        Database db = new Database();
+        String s = "update loket set nama='" + nama + "' ,alamat='" + alamat + "',notlp='" + notlp + "',username='" + user + "',password='" + pass + "' where idLoket='" + id + "' ";
+        db.query(s);
+    }
+
     public loket getLoket(String user, String pass) {
         Database db = new Database();
         loket e = new loket();
@@ -176,6 +204,12 @@ public class Aplikasi {
 
         Database db = new Database();
         String s = "insert into manpel values('" + ex.getIdManpel() + "','" + ex.getNama() + "','" + ex.getAlamat() + "','" + ex.getUsername() + "','" + ex.getPassword() + "')";
+        db.query(s);
+    }
+
+    public void updateManpel(int id, String nama, String alamat, int notlp, String user, String pass) {
+        Database db = new Database();
+        String s = "update manpel set nama='" + nama + "' ,alamat='" + alamat + "',notlp='" + notlp + "',username='" + user + "',password='" + pass + "' where idManpel='" + id + "' ";
         db.query(s);
     }
 
