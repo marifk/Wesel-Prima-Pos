@@ -12,6 +12,8 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import koneksi.Database;
 import model.Aplikasi;
@@ -48,6 +50,7 @@ public class StatusAntar extends javax.swing.JFrame implements View {
         jScrollPane1 = new javax.swing.JScrollPane();
         tb = new javax.swing.JTable();
         btnCancel = new javax.swing.JButton();
+        btnUpdate = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -68,9 +71,21 @@ public class StatusAntar extends javax.swing.JFrame implements View {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tb.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tb);
 
         btnCancel.setText("Cancel");
+
+        btnUpdate.setText("Update");
+        btnUpdate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUpdateActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -81,21 +96,20 @@ public class StatusAntar extends javax.swing.JFrame implements View {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 409, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnCari, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(btnCari)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(jLabel1)
-                                        .addGap(34, 34, 34)
-                                        .addComponent(tgl, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addContainerGap())
+                                .addComponent(jLabel1)
+                                .addGap(34, 34, 34)
+                                .addComponent(tgl, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                 .addComponent(btnCancel)
-                                .addGap(36, 36, 36))))))
+                                .addGap(29, 29, 29)
+                                .addComponent(btnUpdate)))))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -109,8 +123,10 @@ public class StatusAntar extends javax.swing.JFrame implements View {
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnCancel)
-                .addContainerGap(21, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnCancel)
+                    .addComponent(btnUpdate))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -132,7 +148,36 @@ public class StatusAntar extends javax.swing.JFrame implements View {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-public void tampilTransaksi(Date tgl) {
+
+    Aplikasi app = new Aplikasi();
+    model.transaksi tr = new model.transaksi();
+model.transaksi tran = new model.transaksi();
+
+    private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
+        // TODO add your handling code here:
+        try {
+            app.updateStatusAntar(tran.getNoResi(), getCbStat(), getCbKet());
+            JOptionPane.showMessageDialog(null, "Update Status Antar Berhasil");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+    }//GEN-LAST:event_btnUpdateActionPerformed
+
+    private void tbMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbMouseClicked
+        // TODO add your handling code here:
+        tran.setNoResi(tb.getValueAt(tb.getSelectedRow(), 0).toString());
+        //System.out.print(tb.getValueAt(tb.getSelectedRow(), 0)+" ");
+       /* tb.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
+        @Override
+        public void valueChanged(ListSelectionEvent event) {
+            // do some actions here, for example
+            // print first column value from selected row
+            tran.setNoResi(tb.getValueAt(tb.getSelectedRow(), 0).toString());
+            System.out.print(tb.getValueAt(tb.getSelectedRow(), 0)+" ");
+        }
+    });*/
+    }//GEN-LAST:event_tbMouseClicked
+    public void tampilTransaksi(Date tgl) {
         DefaultTableModel tabel = new DefaultTableModel();
         tabel.addColumn("No. Resi");
         tabel.addColumn("Tanggal Cetak");
@@ -143,8 +188,6 @@ public void tampilTransaksi(Date tgl) {
         cbStat = new JComboBox();
         cbStat.addItem("Berhasil");
         cbStat.addItem("Gagal");
-        Aplikasi app = new Aplikasi();
-        model.transaksi tr = new model.transaksi();
         tabel.addColumn("Keterangan");
         try {
             Database db = new Database();
@@ -158,7 +201,7 @@ public void tampilTransaksi(Date tgl) {
                 tr.setTglCetak(res.getDate(10));
                 tr.setBesarUang(res.getInt(11));
                 tabel.addRow(new Object[]{res.getString(1), res.getDate(10), res.getInt(11),
-                    res.getString(2), res.getString(6)});
+                    res.getString(2), res.getString(6), res.getString(13), res.getString(15)});
 
             }
         } catch (Exception e) {
@@ -166,15 +209,32 @@ public void tampilTransaksi(Date tgl) {
         }
         tb.setModel(tabel);
         tb.getColumnModel().getColumn(5).setCellEditor(new DefaultCellEditor(cbStat));
+        cbKet = new JComboBox();
+        cbKet.addItem("");
+        cbKet.addItem("Alamat Tidak Jelas");
+        cbKet.addItem("Pindah Alamat");
+        cbKet.addItem("Ditolah penerima");
+        tb.getColumnModel().getColumn(6).setCellEditor(new DefaultCellEditor(cbKet));
         if (cbStat.getSelectedItem().toString().equals("Gagal")) {
-            cbKet = new JComboBox();
-            cbKet.addItem("Alamat Tidak Jelas");
-            cbKet.addItem("Pindah Alamat");
-            cbKet.addItem("Ditolah penerima");
-            tb.getColumnModel().getColumn(5).setCellEditor(new DefaultCellEditor(cbKet));
+            tb.getColumnModel().getColumn(6).setCellEditor(new DefaultCellEditor(cbKet));
         }
 
-        app.updateStatusAntar(tr.getNoResi(), cbStat.getSelectedItem().toString(), cbKet.getSelectedItem().toString());
+    }
+
+    public String getCbStat() {
+        return cbStat.getSelectedItem().toString();
+    }
+
+    public String getCbKet() {
+        return cbKet.getSelectedItem().toString();
+    }
+
+    public void setCbStat(Object cbStat) {
+        this.cbStat.setSelectedItem(cbStat);
+    }
+
+    public void setCbKet(Object cbKet) {
+        this.cbKet.setSelectedItem(cbKet);
     }
 
     public Date getTgl() {
@@ -194,15 +254,21 @@ public void tampilTransaksi(Date tgl) {
         return btnCari;
     }
 
+    public Object getBtnUpdate() {
+        return btnUpdate;
+    }
+
     @Override
     public void addListener(ActionListener e) {
         btnCancel.addActionListener(e);
         btnCari.addActionListener(e);
+        btnUpdate.addActionListener(e);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnCari;
+    private javax.swing.JButton btnUpdate;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;

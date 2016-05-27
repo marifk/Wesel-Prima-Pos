@@ -23,11 +23,17 @@ import view.manpel.Expedisi;
 import view.manpel.Loket;
 import view.manpel.ManPel;
 import view.manpel.Transaksi;
+import view.manpel.addExpedisi;
+import view.manpel.addLoket;
 import view.manpel.addPelayanan;
 import view.manpel.addTransaksi;
 import view.manpel.cetakTransaksi;
+import view.manpel.editExpedisi;
+import view.manpel.editLoket;
 import view.manpel.editTransaksi;
 import view.manpel.profilManpel;
+import view.manpel.viewExpedisi;
+import view.manpel.viewLoket;
 import view.manpel.viewPelayanan;
 import view.manpel.viewTransaksi;
 
@@ -167,6 +173,51 @@ public class Controller implements ActionListener {
         viewPelayanan m = new viewPelayanan();
         m.setVisible(true);
         m.addListener(this);
+        m.tampilManpel();
+        view = m;
+    }
+
+    public void goToViewLoket() {
+        viewLoket m = new viewLoket();
+        m.setVisible(true);
+        m.addListener(this);
+        m.tampilLoket();
+        view = m;
+    }
+
+    public void goToAddLoket() {
+        addLoket m = new addLoket();
+        m.setVisible(true);
+        m.addListener(this);
+        view = m;
+    }
+
+    public void goToEditLoket() {
+        editLoket m = new editLoket();
+        m.setVisible(true);
+        m.addListener(this);
+        view = m;
+    }
+
+    public void goToViewExpedisi() {
+        viewExpedisi m = new viewExpedisi();
+        m.setVisible(true);
+        m.addListener(this);
+        m.tampilExpedisi();
+        view = m;
+    }
+
+    public void goToAddExpedisi() {
+        addExpedisi m = new addExpedisi();
+        m.setVisible(true);
+        m.addListener(this);
+        view = m;
+    }
+
+    public void goToEditExpedisi() {
+        editExpedisi m = new editExpedisi();
+        m.setVisible(true);
+        m.addListener(this);
         view = m;
     }
 
@@ -279,6 +330,72 @@ public class Controller implements ActionListener {
                 } else if (source.equals(mn.getBack())) {
                     mn.dispose();
                     goToMain();
+                }
+            } else if (view instanceof addPelayanan) {
+                addPelayanan mn = (addPelayanan) view;
+
+                if (source.equals(mn.getBtnCancel())) {
+                    mn.dispose();
+                    goToManpel();
+                } else if (source.equals(mn.getBtnAdd())) {
+                    try {
+                        model.manpel m = app.getManpelId(mn.getId());
+                        if ((mn.getId() == 0) || (mn.getNama().equals("")) || (mn.getAlamat().equals(""))
+                                || (mn.getNotlp() == 0) || (mn.getUsername().equals("")) || (mn.getPass().equals(""))
+                                || (mn.getPass2().equals(""))) {
+                            mn.setVisible(true);
+                            JOptionPane.showMessageDialog(null, "Tidak Boleh Kosong");
+                        } else if (mn.getPass().equals(mn.getPass2())) {
+                            if (m == null) {
+                                model.manpel m2 = app.getManpel(mn.getUsername(), mn.getPass());
+                                if (m2 == null) {
+                                    mn.dispose();
+                                    model.manpel m3 = new model.manpel(mn.getId(), mn.getNama(), mn.getAlamat(), mn.getNotlp(), mn.getUsername(), mn.getPass());
+                                    app.saveManpel(m3);
+                                    JOptionPane.showMessageDialog(null, "Penambahan Petugas Pelayanan Berhasil");
+                                    goToManpel();
+                                } else {
+                                    JOptionPane.showMessageDialog(null, "Username sudah ada");
+                                }
+
+                            } else {
+                                JOptionPane.showMessageDialog(null, "ID sudah ada");
+                            }
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Password Tidak Sama");
+                        }
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(null, "Inputan Salah");
+                    }
+                }
+            } else if (view instanceof profilManpel) {
+                profilManpel mn = (profilManpel) view;
+                if (source.equals(mn.getBtnEdit())) {
+                    try {
+                        if ((mn.getNama().equals("")) || (mn.getAlamat().equals("")) || (mn.getNoTelp() == 0) || (mn.getUsername().equals("")) || (mn.getPassword().equals(""))) {
+                            mn.setVisible(true);
+                            JOptionPane.showMessageDialog(null, "Tidak Boleh Kosong");
+                        } else if (man != null) {
+                            mn.dispose();
+                            app.updateManpel(man.getIdManpel(), mn.getNama(), mn.getAlamat(), mn.getNoTelp(), mn.getUsername(), mn.getPassword());
+                            JOptionPane.showMessageDialog(null, "Pengeditan Petugas Pelayanan Berhasil");
+                            goToManpel();
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Data Tidak Ada");
+                        }
+
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(null, "Inputan Salah");
+                    }
+                } else if (source.equals(mn.getBtnCancel())) {
+                    mn.dispose();
+                    goToManpel();
+                }
+            } else if (view instanceof viewPelayanan) {
+                viewPelayanan mn = (viewPelayanan) view;
+                if (source.equals(mn.getBtnBack())) {
+                    mn.dispose();
+                    goToManpel();
                 }
             } else if (view instanceof Transaksi) {
                 Transaksi mn = (Transaksi) view;
@@ -452,7 +569,7 @@ public class Controller implements ActionListener {
             } else if (view instanceof StatusBayar) {
                 StatusBayar mn = (StatusBayar) view;
                 if (source.equals(mn.getBtnCari())) {
-          
+
                     try {
                         transaksi tr = app.getTransaksi(mn.getTgl());
                         if (tr != null) {
@@ -465,6 +582,195 @@ public class Controller implements ActionListener {
                 } else if (source.equals(mn.getBtnCancel())) {
                     mn.dispose();
                     goToMainLoket();
+                }
+            } else if (view instanceof Expedisi) {
+                Expedisi mn = (Expedisi) view;
+                if (source.equals(mn.getAddExpedisi())) {
+                    mn.dispose();
+                    goToAddExpedisi();
+                } else if (source.equals(mn.getEditExpedisi())) {
+                    mn.dispose();
+                    goToEditExpedisi();
+                } else if (source.equals(mn.getViewExpedisi())) {
+                    mn.dispose();
+                    goToViewExpedisi();
+                } else if (source.equals(mn.getBack())) {
+                    mn.dispose();
+                    goToMain();
+                }
+            } else if (view instanceof addExpedisi) {
+                addExpedisi mn = (addExpedisi) view;
+                if (source.equals(mn.getBtnAdd())) {
+                    try {
+                        model.expedisi m = app.getExpedisiId(mn.getId());
+                        if ((mn.getId() == 0) || (mn.getNama().equals("")) || (mn.getAlamat().equals(""))
+                                || (mn.getNotlp() == 0) || (mn.getUsername().equals("")) || (mn.getPass().equals(""))
+                                || (mn.getPass2().equals(""))) {
+                            mn.setVisible(true);
+                            JOptionPane.showMessageDialog(null, "Tidak Boleh Kosong");
+                        } else if (mn.getPass().equals(mn.getPass2())) {
+                            if (m == null) {
+                                model.expedisi m2 = app.getExpedisi(mn.getUsername(), mn.getPass());
+                                if (m2 == null) {
+                                    mn.dispose();
+                                    model.expedisi m3 = new model.expedisi(mn.getId(), mn.getNama(), mn.getAlamat(), mn.getNotlp(), mn.getUsername(), mn.getPass());
+                                    app.saveExpedisi(m3);
+                                    JOptionPane.showMessageDialog(null, "Penambahan Petugas Expedisi Berhasil");
+                                    goToManpel();
+                                } else {
+                                    JOptionPane.showMessageDialog(null, "Username sudah ada");
+                                }
+
+                            } else {
+                                JOptionPane.showMessageDialog(null, "ID sudah ada");
+                            }
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Password Tidak Sama");
+                        }
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(null, "Inputan Salah");
+                    }
+                } else if (source.equals(mn.getBtnCancel())) {
+                    mn.dispose();
+                    goToExpedisi();
+                }
+            } else if (view instanceof editExpedisi) {
+                editExpedisi mn = (editExpedisi) view;
+
+                if (source.equals(mn.getBtnCancel())) {
+                    mn.dispose();
+                    goToExpedisi();
+                } else if (source.equals(mn.getBtnCari())) {
+                    model.expedisi ep = app.getExpedisiId(mn.getId());
+                    if (ep != null) {
+                        mn.setNama(ep.getNama());
+                        mn.setAlamat(ep.getAlamat());
+                        mn.setNotlp(String.valueOf(ep.getNotlp()));
+                        mn.setUsername(ep.getUsername());
+                        mn.setPass(ep.getPassword());
+                        mn.setPass2(ep.getPassword());
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Data tidak ada");
+                    }
+                } else if (source.equals(mn.getBtnEdit())) {
+                        model.expedisi ep = app.getExpedisiId(mn.getId());
+                    if ((mn.getNama().equals("")) || (mn.getAlamat().equals(""))
+                            || (mn.getNotlp() == 0) || (mn.getUsername().equals("")) || (mn.getPass().equals(""))
+                            || (mn.getPass2().equals(""))) {
+                        JOptionPane.showMessageDialog(null, "Tidak Boleh Kosong");
+                    } else if (ep != null) {
+                        if (mn.getPass().equals(mn.getPass2())) {
+                            app.updateExpedisi(ep.getIdExpedisi(), mn.getNama(), mn.getAlamat(), mn.getNotlp(), mn.getUsername(), mn.getPass());
+                            JOptionPane.showMessageDialog(null, "Pengeditan Expedisi Berhasil");
+                            goToExpedisi();
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Password Tidak sama");
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Data tidak ada");
+                    }
+
+                }
+            } else if (view instanceof viewExpedisi) {
+                viewExpedisi mn = (viewExpedisi) view;
+                if (source.equals(mn.getBtnBack())) {
+                    mn.dispose();
+                    goToExpedisi();
+                }
+            } else if (view instanceof Loket) {
+                Loket mn = (Loket) view;
+                if (source.equals(mn.getAddLoket())) {
+                    mn.dispose();
+                    goToAddLoket();
+                } else if (source.equals(mn.getEditLoket())) {
+                    mn.dispose();
+                    goToEditLoket();
+                } else if (source.equals(mn.getViewLoket())) {
+                    mn.dispose();
+                    goToViewLoket();
+                } else if (source.equals(mn.getBack())) {
+                    mn.dispose();
+                    goToMain();
+                }
+            } else if (view instanceof addLoket) {
+                addLoket mn = (addLoket) view;
+                if (source.equals(mn.getBtnAdd())) {
+                    try {
+                        model.loket m = app.getLoketId(mn.getId());
+                        if ((mn.getId() == 0) || (mn.getNama().equals("")) || (mn.getAlamat().equals(""))
+                                || (mn.getNotlp() == 0) || (mn.getUsername().equals("")) || (mn.getPass().equals(""))
+                                || (mn.getPass2().equals(""))) {
+                            mn.setVisible(true);
+                            JOptionPane.showMessageDialog(null, "Tidak Boleh Kosong");
+                        } else if (mn.getPass().equals(mn.getPass2())) {
+                            if (m == null) {
+                                model.loket m2 = app.getLoket(mn.getUsername(), mn.getPass());
+                                if (m2 == null) {
+                                    mn.dispose();
+                                    model.loket m3 = new model.loket(mn.getId(), mn.getNama(), mn.getAlamat(), mn.getNotlp(), mn.getUsername(), mn.getPass());
+                                    app.saveLoket(m3);
+                                    JOptionPane.showMessageDialog(null, "Penambahan Petugas Loket Berhasil");
+                                    goToLoket();
+                                } else {
+                                    JOptionPane.showMessageDialog(null, "Username sudah ada");
+                                }
+
+                            } else {
+                                JOptionPane.showMessageDialog(null, "ID sudah ada");
+                            }
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Password Tidak Sama");
+                        }
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(null, "Inputan Salah");
+                    }
+                } else if (source.equals(mn.getBtnCancel())) {
+                    mn.dispose();
+                    goToLoket();
+                }
+            } else if (view instanceof editLoket) {
+                editLoket mn = (editLoket) view;
+                
+
+                if (source.equals(mn.getBtnCari())) {
+                    model.loket ep = app.getLoketId(mn.getId());
+                    if (ep != null) {
+                        mn.setNama(ep.getNama());
+                        mn.setAlamat(ep.getAlamat());
+                        mn.setNotlp(String.valueOf(ep.getNotlp()));
+                        mn.setUsername(ep.getUsername());
+                        mn.setPass(ep.getPassword());
+                        mn.setPass2(ep.getPassword());
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Data tidak ada");
+                    }
+                } else if (source.equals(mn.getBtnEdit())) {
+                    model.loket ep = app.getLoketId(mn.getId());
+                    if ((mn.getNama().equals("")) || (mn.getAlamat().equals(""))
+                            || (mn.getNotlp() == 0) || (mn.getUsername().equals("")) || (mn.getPass().equals(""))
+                            || (mn.getPass2().equals(""))) {
+                        JOptionPane.showMessageDialog(null, "Tidak Boleh Kosong");
+                    } else if (ep != null) {
+                        if (mn.getPass().equals(mn.getPass2())) {
+                            app.updateLoket(ep.getIdLoket(), mn.getNama(), mn.getAlamat(), mn.getNotlp(), mn.getUsername(), mn.getPass());
+                            JOptionPane.showMessageDialog(null, "Pengeditan Loket Berhasil");
+                            goToLoket();
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Password Tidak sama");
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Data tidak ada");
+                    }
+
+                } else if (source.equals(mn.getBtnCancel())) {
+                    mn.dispose();
+                    goToLoket();
+                }
+            } else if (view instanceof viewLoket) {
+                viewLoket mn = (viewLoket) view;
+                if (source.equals(mn.getBtnBack())) {
+                    mn.dispose();
+                    goToLoket();
                 }
             } else if (view instanceof MainExpedisi) {
                 MainExpedisi mn = (MainExpedisi) view;

@@ -46,6 +46,7 @@ public class StatusBayar extends javax.swing.JFrame implements View {
         jScrollPane1 = new javax.swing.JScrollPane();
         tb = new javax.swing.JTable();
         btnCancel = new javax.swing.JButton();
+        btnUpdate = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -66,9 +67,21 @@ public class StatusBayar extends javax.swing.JFrame implements View {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tb.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tb);
 
         btnCancel.setText("Cancel");
+
+        btnUpdate.setText("Update");
+        btnUpdate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUpdateActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -82,18 +95,19 @@ public class StatusBayar extends javax.swing.JFrame implements View {
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(btnCari)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(jLabel1)
-                                        .addGap(34, 34, 34)
-                                        .addComponent(tgl, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addContainerGap())
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                .addComponent(btnCancel)
-                                .addGap(36, 36, 36))))))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(btnCari)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addGap(34, 34, 34)
+                                .addComponent(tgl, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addContainerGap())))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnCancel)
+                .addGap(12, 12, 12)
+                .addComponent(btnUpdate)
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -107,8 +121,10 @@ public class StatusBayar extends javax.swing.JFrame implements View {
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(33, 33, 33)
-                .addComponent(btnCancel)
-                .addContainerGap(93, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnCancel)
+                    .addComponent(btnUpdate))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -130,7 +146,24 @@ public class StatusBayar extends javax.swing.JFrame implements View {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-public void tampilTransaksi(Date tgl) {
+Aplikasi app = new Aplikasi();
+    model.transaksi tr = new model.transaksi();
+    model.transaksi tran = new model.transaksi();
+    private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
+        // TODO add your handling code here:
+        try {
+            app.updateStatusBayar(tran.getNoResi(), getCbBayar());
+            JOptionPane.showMessageDialog(null, "Update Status Bayar Berhasil");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+    }//GEN-LAST:event_btnUpdateActionPerformed
+
+    private void tbMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbMouseClicked
+        // TODO add your handling code here:
+        tran.setNoResi(tb.getValueAt(tb.getSelectedRow(), 0).toString());
+    }//GEN-LAST:event_tbMouseClicked
+    public void tampilTransaksi(Date tgl) {
         DefaultTableModel tabel = new DefaultTableModel();
         tabel.addColumn("No. Resi");
         tabel.addColumn("Tanggal Cetak");
@@ -142,8 +175,7 @@ public void tampilTransaksi(Date tgl) {
         cbBayar.addItem("");
         cbBayar.addItem("Berhasil");
         cbBayar.addItem("Gagal");
-        Aplikasi app = new Aplikasi();
-        model.transaksi tr = new model.transaksi();
+
         try {
             Database db = new Database();
 
@@ -158,7 +190,7 @@ public void tampilTransaksi(Date tgl) {
                 tr.setBesarUang(res.getInt(11));
 
                 tabel.addRow(new Object[]{res.getString(1), res.getDate(10), res.getInt(11),
-                    res.getString(2), res.getString(6)});
+                    res.getString(2), res.getString(6), res.getString(14)});
 
             }
         } catch (Exception e) {
@@ -167,8 +199,14 @@ public void tampilTransaksi(Date tgl) {
 
         tb.setModel(tabel);
         tb.getColumnModel().getColumn(5).setCellEditor(new DefaultCellEditor(cbBayar));
-        app.updateStatusBayar(tr.getNoResi(), cbBayar.getSelectedItem().toString());
+    }
 
+    public String getCbBayar() {
+        return cbBayar.getSelectedItem().toString();
+    }
+
+    public void setCbBayar(Object cbBayar) {
+        this.cbBayar.setSelectedItem(cbBayar);
     }
 
     public Date getTgl() {
@@ -188,14 +226,20 @@ public void tampilTransaksi(Date tgl) {
         return btnCari;
     }
 
+    public Object getBtnUpdate() {
+        return btnUpdate;
+    }
+
     @Override
     public void addListener(ActionListener e) {
         btnCancel.addActionListener(e);
         btnCari.addActionListener(e);
+        btnUpdate.addActionListener(e);
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnCari;
+    private javax.swing.JButton btnUpdate;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;

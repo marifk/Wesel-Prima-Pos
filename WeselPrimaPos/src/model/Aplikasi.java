@@ -151,7 +151,28 @@ public class Aplikasi {
         }
         return e;
     }
-
+    public expedisi getExpedisiId(int id) {
+        Database db = new Database();
+        expedisi e = new expedisi();
+        ResultSet rs;
+        try {
+            String s = "select*from expedisi where idExpedisi='" + id + "' ";
+            rs = db.getData(s);
+            if (rs.next()) {
+                e.setIdExpedisi(rs.getInt(1));
+                e.setNama(rs.getString(2));
+                e.setAlamat(rs.getString(3));
+                e.setNotlp(rs.getInt(4));
+                e.setUsername(rs.getString(5));
+                e.setPassword(rs.getString(6));
+            } else {
+                e = null;
+            }
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+        return e;
+    }
     public void deleteExpedisi(String user) {
         Database db = new Database();
         String s = "delete from expedisi where username='" + user + "'";
@@ -193,7 +214,28 @@ public class Aplikasi {
         }
         return e;
     }
-
+    public loket getLoketId(int id) {
+        Database db = new Database();
+        loket e = new loket();
+        ResultSet rs;
+        try {
+            String s = "select*from loket where idLoket='" + id + "'  ";
+            rs = db.getData(s);
+            if (rs.next()) {
+                e.setIdLoket(rs.getInt(1));
+                e.setNama(rs.getString(2));
+                e.setAlamat(rs.getString(3));
+                e.setNotlp(rs.getInt(4));
+                e.setUsername(rs.getString(5));
+                e.setPassword(rs.getString(6));
+            } else {
+                e = null;
+            }
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+        return e;
+    }
     public void deleteLoket(String user) {
         Database db = new Database();
         String s = "delete from loket where username='" + user + "'";
@@ -219,6 +261,28 @@ public class Aplikasi {
         ResultSet rs;
         try {
             String s = "select*from manpel where username='" + user + "' and password='" + pass + "' ";
+            rs = db.getData(s);
+            if (rs.next()) {
+                e.setIdManpel(rs.getInt(1));
+                e.setNama(rs.getString(2));
+                e.setAlamat(rs.getString(3));
+                e.setNotlp(rs.getInt(4));
+                e.setUsername(rs.getString(5));
+                e.setPassword(rs.getString(6));
+            } else {
+                e = null;
+            }
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+        return e;
+    }
+    public manpel getManpelId(int id) {
+        Database db = new Database();
+        manpel e = new manpel();
+        ResultSet rs;
+        try {
+            String s = "select*from manpel where idManpel='" + id + "' ";
             rs = db.getData(s);
             if (rs.next()) {
                 e.setIdManpel(rs.getInt(1));
